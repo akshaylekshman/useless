@@ -764,33 +764,42 @@ const Space = (() => {
 // ═══════════════════════════════════════════════════════════════
 
 // How much loading to add per click at a given value
+// Tuned so payment gate appears in ~20 clicks
 function getIncrement(v) {
-  if (v < 80) {
-    // Fast phase — big jumps
-    return 3.5 + Math.random() * 4.5;
+  if (v < 85) {
+    // Fast phase — very big jumps, reaches 85% in ~7-8 clicks
+    return 10 + Math.random() * 7;
   }
   // Slow phase — gap-based, asymptotic approach
-  const cap = 99.999999;
+  const cap = 99.99;
   const gap = cap - v;
   let factor;
-  if (v < 95)       factor = 0.30;
-  else if (v < 99)  factor = 0.22;
-  else if (v < 99.9)   factor = 0.17;
-  else if (v < 99.99)  factor = 0.14;
-  else if (v < 99.999) factor = 0.12;
-  else                 factor = 0.10;
-  return Math.max(gap * factor * (0.7 + Math.random() * 0.6), 1e-10);
+  if (v < 95)       factor = 0.70;  // reaches 95% in ~2 clicks
+  else if (v < 99)  factor = 0.58;  // reaches 99% in ~3 clicks
+  else if (v < 99.9)  factor = 0.48; // reaches 99.9% in ~4 clicks
+  else if (v < 99.99) factor = 0.38; // reaches 99.99% in ~5 clicks
+  else                factor = 0.28;
+  return Math.max(gap * factor * (0.8 + Math.random() * 0.4), 1e-10);
 }
 
-const PAYMENT_THRESHOLD = 99.999999; // Show payment gate when value reaches this
+const PAYMENT_THRESHOLD = 99.99; // Payment gate appears after ~20 clicks
 
 function applyClickToLoading() {
-  if (STATE.payShown) return; // Don't progress if payment is pending
+  if (STATE.payShown) return;
 
   const v = STATE.loadingValue;
 
-  // 5% chance of backwards regression (click-driven, not automatic)
-  if (Math.random() < 0.05 && v > 45) {
+  // ── GUARANTEED TRIGGER: after 20 page clicks, force payment gate no matter what ──
+  if (STATE.pageClicks >= 20 && !STATE.payShown) {
+    STATE.payShown   = true;
+    STATE.loadingValue = 99.99;
+    updateLoadUI();
+    showPayGate();
+    return;
+  }
+
+  // Backwards regression — only when below 90% to avoid blocking payment
+  if (Math.random() < 0.05 && v > 45 && v < 90) {
     const bigDrop = Math.random() < 0.2;
     const drop = bigDrop
       ? Math.random() * 2.5 + 0.5
@@ -814,7 +823,7 @@ function applyClickToLoading() {
   STATE.loadingValue = Math.min(v + inc, PAYMENT_THRESHOLD);
   updateLoadUI();
 
-  // Check if payment threshold reached
+  // Check if payment threshold reached via value
   if (STATE.loadingValue >= PAYMENT_THRESHOLD && !STATE.payShown) {
     STATE.payShown = true;
     STATE.loadingValue = PAYMENT_THRESHOLD;
@@ -822,12 +831,13 @@ function applyClickToLoading() {
     showPayGate();
   }
 
-  // Update ETA on every 5th click
+  // Update ETA every 5 clicks
   if (STATE.pageClicks % 5 === 0) {
     const phrase = ETA_PHRASES[STATE.etaIdx % ETA_PHRASES.length];
     STATE.etaIdx++;
     etaText.textContent = 'ETA: ' + phrase;
   }
+
 }
 
 function updateLoadUI() {
@@ -981,17 +991,29 @@ function advancePage() {
   pageTitle.textContent    = 'PAGE ' + STATE.page;
   pageSubtitle.textContent = comment;
   pageBadge.textContent    = 'PAGE ' + STATE.page;
-
-  loadPercent.style.color = '';
+  loadPercent.style.color  = '';
   updateUI();
   addLog(`Entered Page ${STATE.page}. Total spent: ₹${STATE.moneySpent}.`, 'success');
 
-  // Money commentary
-  if (STATE.moneySpent >= 100) showMsg(`₹100 spent. You could have bought something. You didn't.`);
-  else if (STATE.moneySpent >= 55) showMsg(`₹55 spent. The researchers are speechless.`);
-  else if (STATE.moneySpent >= 10) showMsg(`₹10 total. Interesting financial decision.`);
-  else showMsg(`₹${STATE.moneySpent} spent so far. For nothing.`);
+  // ★ DRAMATIC LEVEL-UP OVERLAY — impossible to miss ★
+  const lu     = document.getElementById('levelUpOverlay');
+  const luPage = document.getElementById('luPage');
+  const luSub  = document.getElementById('luSub');
+  if (lu) {
+    luPage.textContent = 'PAGE ' + STATE.page + ' UNLOCKED';
+    luSub.textContent  = `You paid ₹${STATE.moneySpent} total. For absolutely nothing.`;
+    lu.classList.add('show');
+    setTimeout(() => {
+      lu.classList.remove('show');
+      // Money commentary after overlay fades
+      if (STATE.moneySpent >= 100) showMsg(`₹100 spent. You could have bought something. You didn't.`);
+      else if (STATE.moneySpent >= 55) showMsg(`₹55 spent. The researchers are speechless.`);
+      else if (STATE.moneySpent >= 10) showMsg(`₹10 total. Interesting financial decision.`);
+      else showMsg(`₹${STATE.moneySpent} spent so far. For nothing. Enjoy Page ${STATE.page}.`);
+    }, 3000); // Show for 3 seconds
+  }
 }
+
 
 // ═══════════════════════════════════════════════════════════════
 // RANDOM EVENTS
