@@ -3,319 +3,291 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>THE BUTTON — Button Interaction Research Facility</title>
-  <meta name="description" content="An innovative solution to a problem that does not exist. Click the button. Nothing will happen. But you'll keep clicking anyway." />
+  <title>THE BUTTON — Cosmic Research Initiative</title>
+  <meta name="description" content="An innovative solution to a problem that does not exist. The universe depends on your clicks. Spoiler: it doesn't." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<!-- Scanline overlay -->
-<div class="scanline" aria-hidden="true"></div>
+<!-- ══ SPACE CANVAS (behind everything) ══ -->
+<canvas id="spaceCanvas"></canvas>
 
-<!-- ====== Welcome Back Overlay ====== -->
-<div id="welcomeBack" class="hidden">
+<!-- ══ WORMHOLE TRANSITION OVERLAY ══ -->
+<div id="wormholeOverlay"></div>
+
+<!-- ══ WELCOME BACK ══ -->
+<div id="welcomeBack">
   <div class="wb-card">
     <div class="wb-icon">👁️</div>
     <div class="wb-title" id="wbTitle">YOU CAME BACK.</div>
-    <div class="wb-body" id="wbBody">
-      We knew you would.<br>
-      Your progress has been preserved.<br>
-      Not that it matters.
-    </div>
-    <button class="wb-continue" id="wbContinue">CONTINUE MY MISTAKE</button>
+    <div class="wb-body" id="wbBody">We knew you would.<br>Your progress is preserved.<br>Not that it matters.</div>
+    <button class="wb-btn" id="wbContinue">CONTINUE MY MISTAKE →</button>
   </div>
 </div>
 
-<!-- ====== Main App ====== -->
+<!-- ══ APP ══ -->
 <div id="app">
 
-  <!-- Header -->
-  <header>
-    <div class="header-brand">
-      <span class="facility">⬡ Button Interaction Research Facility</span>
-      <span class="subtitle">EXPERIMENTAL DIVISION · SECTOR 7G · AUTHORIZED PERSONNEL ONLY</span>
-    </div>
-    <div class="header-meta">
-      <div class="meta-pill">
-        <span class="label">EXPERIMENT </span><span class="value">BTN-001</span>
-      </div>
-      <div class="meta-pill">
-        <span class="label">SUBJECT </span><span class="value">HUMAN</span>
-      </div>
-      <div class="meta-pill">
-        <span class="label">STATUS </span><span class="value"><span class="status-dot"></span>ACTIVE</span>
-      </div>
-      <div class="meta-pill">
-        <span class="label">PURPOSE </span><span class="value">UNKNOWN</span>
+  <!-- HEADER -->
+  <header id="appHeader">
+    <div class="hdr-brand">
+      <div class="hdr-hex">⬡</div>
+      <div class="hdr-text">
+        <div class="hdr-title">BUTTON INTERACTION RESEARCH FACILITY</div>
+        <div class="hdr-sub">COSMIC DIVISION · EXPERIMENT BTN-001 · CLASSIFIED · SECTOR 7G</div>
       </div>
     </div>
-    <div class="header-controls">
-      <button class="icon-btn" id="muteBtn" title="Toggle sound">🔊</button>
-      <button class="icon-btn" id="lbBtn" title="Leaderboard">🏆</button>
-      <div class="page-badge" id="pageBadge">PAGE 1</div>
+    <div class="hdr-meta">
+      <div class="meta-chip"><span class="mc-l">STATUS</span><span class="mc-v"><span class="dot"></span>ACTIVE</span></div>
+      <div class="meta-chip"><span class="mc-l">SUBJECT</span><span class="mc-v">HUMAN</span></div>
+      <div class="meta-chip"><span class="mc-l">COSMIC SIG.</span><span class="mc-v">0%</span></div>
+      <div class="meta-chip"><span class="mc-l">PURPOSE</span><span class="mc-v">UNKNOWN</span></div>
+    </div>
+    <div class="hdr-ctrl">
+      <button class="hdr-btn" id="muteBtn" title="Toggle sound">🔊</button>
+      <button class="hdr-btn" id="lbBtn" title="Leaderboard">🏆</button>
+      <div class="page-chip" id="pageBadge">PAGE 1</div>
     </div>
   </header>
 
-  <!-- Ticker -->
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-inner" id="ticker">
-      <span>CLICK ANALYSIS: <strong>ONGOING</strong></span>
-      <span>LOADING: <strong>IN PROGRESS</strong></span>
-      <span>PURPOSE: <strong>UNKNOWN</strong></span>
-      <span>INTELLIGENCE DETECTED: <strong>DEBATABLE</strong></span>
-      <span>BUTTON STATUS: <strong>OPERATIONAL</strong></span>
-      <span>TIME WASTED: <strong id="tickerTime">0s</strong></span>
-      <span>RESEARCH PROGRESS: <strong>NONE</strong></span>
-      <span>BREAKTHROUGH IMMINENT: <strong>NO</strong></span>
-      <!-- duplicate for seamless loop -->
-      <span>CLICK ANALYSIS: <strong>ONGOING</strong></span>
-      <span>LOADING: <strong>IN PROGRESS</strong></span>
-      <span>PURPOSE: <strong>UNKNOWN</strong></span>
-      <span>INTELLIGENCE DETECTED: <strong>DEBATABLE</strong></span>
-      <span>BUTTON STATUS: <strong>OPERATIONAL</strong></span>
-      <span>TIME WASTED: <strong id="tickerTime2">0s</strong></span>
-      <span>RESEARCH PROGRESS: <strong>NONE</strong></span>
-      <span>BREAKTHROUGH IMMINENT: <strong>NO</strong></span>
-    </div>
-  </div>
+  <!-- MAIN 3-COLUMN GRID -->
+  <main id="appMain">
 
-  <!-- Main Grid -->
-  <main>
+    <!-- ═══ LEFT: STATS ═══ -->
+    <aside class="panel glass left-panel">
+      <div class="panel-hdr">// SUBJECT ANALYSIS</div>
 
-    <!-- ===== LEFT PANEL ===== -->
-    <div class="panel left-panel">
-      <div class="panel-title">// SUBJECT ANALYSIS</div>
-
-      <div class="stat-row">
-        <span class="stat-label">Total Clicks</span>
-        <span class="stat-value" id="statClicks">0</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Time Wasted</span>
-        <span class="stat-value green" id="statTime">0s</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Current Page</span>
-        <span class="stat-value yellow" id="statPage">1</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Money Spent</span>
-        <span class="stat-value red" id="statMoney">₹0</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Useful Output</span>
-        <span class="stat-value" id="statUseful">NONE</span>
+      <div class="stat-block">
+        <div class="srow"><span class="sl">TOTAL CLICKS</span><span class="sv cyan" id="statClicks">0</span></div>
+        <div class="srow"><span class="sl">TIME WASTED</span><span class="sv green" id="statTime">0s</span></div>
+        <div class="srow"><span class="sl">CURRENT PAGE</span><span class="sv yellow" id="statPage">1</span></div>
+        <div class="srow"><span class="sl">MONEY SPENT</span><span class="sv red" id="statMoney">₹0</span></div>
+        <div class="srow"><span class="sl">USEFUL OUTPUT</span><span class="sv dim">NONE</span></div>
+        <div class="srow"><span class="sl">REGRET LEVEL</span><span class="sv yellow" id="statRegret">NONE</span></div>
+        <div class="srow"><span class="sl">CLICKS/MIN</span><span class="sv cyan" id="statCpm">0</span></div>
+        <div class="srow"><span class="sl">SPACE-TIME</span><span class="sv green">STABLE</span></div>
+        <div class="srow"><span class="sl">BTN STATUS</span><span class="sv cyan">OPERATIONAL</span></div>
       </div>
 
-      <div class="stat-divider"></div>
+      <div class="sdiv"></div>
 
-      <!-- Stupidity Score Ring -->
-      <div class="score-ring">
-        <div class="score-circle">
-          <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
-            <circle class="track" cx="45" cy="45" r="39"/>
-            <circle class="fill" id="scoreRingFill" cx="45" cy="45" r="39"/>
+      <!-- Stupidity Score -->
+      <div class="score-wrap">
+        <div class="score-ring">
+          <svg viewBox="0 0 90 90" width="90" height="90">
+            <circle class="sr-track" cx="45" cy="45" r="38"/>
+            <circle class="sr-fill" id="scoreRingEl" cx="45" cy="45" r="38"/>
           </svg>
           <div class="score-inner">
-            <span class="score-number" id="scoreNum">0</span>
-            <span class="score-denom">/100</span>
+            <span class="score-n" id="scoreNum">0</span>
+            <span class="score-d">/100</span>
           </div>
         </div>
-        <div class="score-label">STUPIDITY SCORE</div>
-        <div class="score-verdict" id="scoreVerdict">Keep clicking...</div>
+        <div class="score-lbl">STUPIDITY SCORE</div>
+        <div class="score-verdict" id="scoreVerdict">initializing...</div>
+      </div>
+    </aside>
+
+    <!-- ═══ CENTER: MAIN EXPERIENCE ═══ -->
+    <section class="center-col">
+
+      <!-- Experiment info strip -->
+      <div class="exp-strip glass">
+        <div class="exp-item"><span class="ek">EXPERIMENT</span><span class="ev">BTN-001</span></div>
+        <div class="exp-item"><span class="ek">ANALYSIS</span><span class="ev">ONGOING</span></div>
+        <div class="exp-item"><span class="ek">RESULT</span><span class="ev" id="expResult">PENDING</span></div>
+        <div class="exp-item"><span class="ek">CONCLUSION</span><span class="ev" id="expConclusion">NONE</span></div>
+        <div class="exp-item"><span class="ek">HUMANITY</span><span class="ev">CONFUSED</span></div>
       </div>
 
-      <div class="stat-divider"></div>
-
-      <div class="stat-row">
-        <span class="stat-label">Clicks/min</span>
-        <span class="stat-value" id="statCpm">0</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Click Efficiency</span>
-        <span class="stat-value red" id="statEff">0%</span>
-      </div>
-      <div class="stat-row">
-        <span class="stat-label">Regret Level</span>
-        <span class="stat-value yellow" id="statRegret">NONE</span>
-      </div>
-    </div>
-
-    <!-- ===== CENTER PANEL ===== -->
-    <div class="center-panel">
-
-      <!-- Experiment strip -->
-      <div class="experiment-strip">
-        <div class="exp-item">
-          <span class="exp-key">Experiment</span>
-          <span class="exp-val">BTN-001</span>
-        </div>
-        <div class="exp-item">
-          <span class="exp-key">Subject</span>
-          <span class="exp-val">HUMAN</span>
-        </div>
-        <div class="exp-item">
-          <span class="exp-key">Click Analysis</span>
-          <span class="exp-val">ONGOING</span>
-        </div>
-        <div class="exp-item">
-          <span class="exp-key">Result</span>
-          <span class="exp-val" id="expResult">PENDING</span>
-        </div>
-        <div class="exp-item">
-          <span class="exp-key">Conclusion</span>
-          <span class="exp-val" id="expConclusion">NONE</span>
-        </div>
-      </div>
-
-      <!-- Page announcement -->
-      <div class="panel" style="width:100%;text-align:center;padding:14px 20px;">
-        <div style="font-family:var(--mono);font-size:0.52rem;letter-spacing:0.18em;color:var(--text-dim);margin-bottom:4px;text-transform:uppercase;">Now Entering</div>
-        <div style="font-family:var(--orb);font-size:1.4rem;font-weight:900;color:var(--cyan);text-shadow:var(--glow-cyan);letter-spacing:0.12em;" id="pageTitle">PAGE 1</div>
-        <div style="font-family:var(--mono);font-size:0.58rem;color:var(--text-dim);margin-top:4px;letter-spacing:0.06em;" id="pageSubtitle">Nothing awaits you here.</div>
+      <!-- Page announce -->
+      <div class="page-announce glass">
+        <div class="pa-sub">NOW ENTERING</div>
+        <div class="pa-title" id="pageTitle">PAGE 1</div>
+        <div class="pa-desc" id="pageSubtitle">Nothing awaits you here.</div>
       </div>
 
       <!-- Button Arena -->
-      <div class="button-arena">
-        <div class="btn-wrapper" id="btnWrapper">
-          <div class="btn-ring"></div>
-          <div class="btn-ring"></div>
-          <div class="btn-ring"></div>
-          <button id="mainButton" aria-label="Click the button">CLICK<br>ME</button>
+      <div class="btn-arena">
+        <div class="btn-wrap" id="btnWrap">
+          <div class="orbit orbit-1"></div>
+          <div class="orbit orbit-2"></div>
+          <div class="orbit orbit-3"></div>
+          <div class="pulse-ring" id="pRing1"></div>
+          <div class="pulse-ring" id="pRing2"></div>
+          <button id="mainButton" aria-label="Click the button">
+            <span class="btn-inner-glow"></span>
+            <span class="btn-label" id="btnLabel">CLICK<br>ME</span>
+          </button>
         </div>
-
-        <div class="click-display">
-          <span class="clicks-label">TOTAL CLICKS</span>
-          <span class="clicks-number" id="clickCount">0</span>
+        <div class="click-disp">
+          <span class="cd-lbl">BUTTON ACTIVATIONS</span>
+          <span class="cd-num" id="clickCount">0</span>
         </div>
       </div>
 
       <!-- Message area -->
-      <div class="message-area">
-        <div class="message-text" id="msgText">Waiting for subject to make a mistake...</div>
+      <div class="msg-area glass">
+        <span class="msg-diamond">◈</span>
+        <span class="msg-text" id="msgText">Awaiting subject interaction...</span>
       </div>
 
-      <!-- Loading section -->
-      <div class="loading-section">
-        <div class="loading-header">
-          <span class="loading-title">⬡ LOADING PROGRESS</span>
-          <span class="loading-percent" id="loadPercent">0.0000%</span>
+      <!-- Loading -->
+      <div class="load-section glass">
+        <div class="load-hdr">
+          <span class="load-title">⬡ EXPERIMENT COMPLETION</span>
+          <span class="load-pct" id="loadPercent">0%</span>
         </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        <div class="load-track">
+          <div class="load-fill" id="progressFill" style="width:0%"></div>
         </div>
-        <div class="loading-meta">
-          <span class="loading-eta" id="etaText">ETA: Awaiting first click...</span>
-          <span class="loading-event" id="loadEvent"></span>
-        </div>
-      </div>
-
-      <!-- Pay section -->
-      <div class="pay-section" id="paySection">
-        <div class="pay-banner">⚡ Loading has reached its natural limit.</div>
-        <div class="pay-amount" id="payAmount">PAY ₹1 TO CONTINUE</div>
-        <button class="pay-btn" id="payBtn">⚡ PAY NOW &amp; UNLOCK PAGE 2</button>
-        <div class="pay-note" id="payNote">You are voluntarily paying to unlock another useless page. The humor is intentional.</div>
-      </div>
-
-    </div>
-
-    <!-- ===== RIGHT PANEL ===== -->
-    <div class="panel right-panel">
-      <div class="panel-title">// ACHIEVEMENTS</div>
-      <div class="achievement-list" id="achList">
-        <!-- Populated by JS -->
-      </div>
-
-      <div class="panel-title" style="margin-top:18px;">// EVENT LOG</div>
-      <div class="event-log" id="eventLog">
-        <div class="event-entry">
-          <span class="etime">00:00</span>System initialized. Awaiting subject.
+        <div class="load-foot">
+          <span class="load-eta" id="etaText">ETA: Click the button to begin.</span>
+          <span class="load-evt" id="loadEvent"></span>
         </div>
       </div>
-    </div>
+
+      <!-- ★ PAYMENT GATE — unmissable, slides in ★ -->
+      <div class="pay-gate" id="payGate">
+        <div class="pay-gate-inner">
+          <div class="pg-alert">⚡ EXPERIMENT AUTHORIZATION REQUIRED</div>
+          <div class="pg-headline">MAXIMUM LOADING REACHED</div>
+          <div class="pg-body">
+            Natural progress has been exhausted.<br>
+            Further access requires financial authorization.
+          </div>
+          <div class="pg-amount-row">
+            <span class="pg-currency">₹</span>
+            <span class="pg-amount" id="pgAmount">1</span>
+          </div>
+          <div class="pg-unlock-lbl" id="pgUnlock">UNLOCKS PAGE 2</div>
+          <button class="pg-btn" id="pgBtn">
+            ⚡ AUTHORIZE PAYMENT — ₹<span id="pgBtnAmt">1</span>
+          </button>
+          <div class="pg-note" id="pgNote">
+            You are voluntarily paying ₹1 to unlock another useless page. The humor is intentional.
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ═══ RIGHT: ACHIEVEMENTS + LOG ═══ -->
+    <aside class="panel glass right-panel">
+      <div class="panel-hdr">// ACHIEVEMENTS</div>
+      <div class="ach-list" id="achList"></div>
+
+      <div class="panel-hdr" style="margin-top:18px">// EVENT LOG</div>
+      <div class="evt-log" id="eventLog">
+        <div class="evt-entry"><span class="et">00:00</span>System initialized. Awaiting subject.</div>
+      </div>
+    </aside>
 
   </main>
 
-  <!-- Footer -->
   <footer>
     BUTTON INTERACTION RESEARCH FACILITY · EXPERIMENT BTN-001 · <span id="footerTime">00:00:00</span> · AN INNOVATIVE SOLUTION TO A PROBLEM THAT DOES NOT EXIST
   </footer>
 
-</div><!-- end #app -->
+</div><!-- #app -->
 
-<!-- ====== LEADERBOARD OVERLAY ====== -->
-<div class="overlay" id="lbOverlay" role="dialog" aria-modal="true" aria-label="Leaderboard">
-  <div class="overlay-card">
-    <button class="close-btn" id="lbClose">✕</button>
-    <div class="overlay-title">🏆 PEOPLE WHO COULD HAVE CLOSED THE WEBSITE BUT DIDN'T</div>
-    <div class="overlay-subtitle">GLOBAL HALL OF QUESTIONABLE DECISIONS · UPDATED LIVE</div>
-    <table class="lb-table">
+
+<!-- ══ LEADERBOARD OVERLAY ══ -->
+<div class="overlay" id="lbOverlay" role="dialog" aria-modal="true">
+  <div class="ov-card glass-modal">
+    <button class="ov-close" id="lbClose">✕</button>
+    <div class="ov-title">🏆 PEOPLE WHO COULD HAVE CLOSED THE TAB BUT DIDN'T</div>
+    <div class="ov-sub">GLOBAL HALL OF QUESTIONABLE DECISIONS · UPDATED LIVE</div>
+    <table class="lb-tbl">
       <thead>
-        <tr>
-          <th>RANK</th>
-          <th>SUBJECT</th>
-          <th>PAGE</th>
-          <th>CLICKS</th>
-          <th>MONEY LOST</th>
-        </tr>
+        <tr><th>RANK</th><th>SUBJECT</th><th>PAGE</th><th>CLICKS</th><th>MONEY LOST</th></tr>
       </thead>
-      <tbody id="lbBody">
-        <!-- Populated by JS -->
-      </tbody>
+      <tbody id="lbBody"></tbody>
     </table>
   </div>
 </div>
 
-<!-- ====== PAYMENT OVERLAY ====== -->
-<div class="overlay" id="payModal" role="dialog" aria-modal="true" aria-label="Payment">
-  <div class="overlay-card">
-    <button class="close-btn" id="payClose">✕</button>
-    <div class="overlay-title" id="payModalTitle">⚡ PAY ₹1 TO CONTINUE</div>
-    <div class="overlay-subtitle" id="payModalSub">You are about to pay real money for absolutely nothing.</div>
-    <div class="qr-wrapper">
-      <img src="assets/images/qr.jpg" alt="Fake UPI QR Code — Demo Only" />
+<!-- ══ PAYMENT MODAL ══ -->
+<div class="overlay" id="payModal" role="dialog" aria-modal="true">
+  <div class="ov-card glass-modal pay-modal-card">
+
+    <!-- STAGE 1: QR display -->
+    <div id="pmStage1">
+      <div class="pm-badge">⬡ EXPERIMENT AUTHORIZATION TERMINAL</div>
+      <div class="pm-title" id="pmTitle">ACCESS FEE: ₹1</div>
+      <div class="pm-exp-line">
+        EXPERIMENT <span id="pmCurExp">001</span> → EXPERIMENT <span id="pmNextExp">002</span>
+      </div>
+
+      <div class="qr-wrap">
+        <div class="qr-scan-label">SCAN TO AUTHORIZE</div>
+        <div class="qr-frame">
+          <img src="assets/images/qr.jpg" alt="Authorization QR Code — Demo" />
+          <div class="qr-scan-line"></div>
+          <div class="qr-corner qr-tl"></div>
+          <div class="qr-corner qr-tr"></div>
+          <div class="qr-corner qr-bl"></div>
+          <div class="qr-corner qr-br"></div>
+        </div>
+        <div class="qr-upi">UPI ID: thebutton@paytm</div>
+        <div class="qr-demo-note">⚠ DEMO — No real money is processed</div>
+      </div>
+
+      <button class="pm-pay-btn" id="pmPayBtn">⚡ I HAVE PAID — AUTHORIZE ACCESS</button>
     </div>
-    <div class="pay-instructions" id="payInstructions">
-      1. Scan the QR code above<br>
-      2. Pay ₹1 using any UPI app<br>
-      3. Click "I PAID" below<br>
-      <br>
-      <em>UPI ID: thebutton@paytm</em><br>
-      <em style="color:#ff4466">(This is a demo. No real payment is processed.)</em>
+
+    <!-- STAGE 2: Processing (6 seconds) -->
+    <div id="pmStage2" class="hidden">
+      <div class="pm-proc-icon">⬡</div>
+      <div class="pm-proc-title">PROCESSING TRANSACTION</div>
+      <div class="pm-proc-msg" id="pmProcMsg">Verifying with quantum ledger...</div>
+      <div class="pm-proc-track">
+        <div class="pm-proc-fill" id="pmProcFill" style="width:0%"></div>
+      </div>
+      <div class="pm-proc-pct" id="pmProcPct">0%</div>
+      <div class="pm-proc-note">DO NOT CLOSE THIS WINDOW</div>
     </div>
-    <button class="pay-confirm-btn" id="payConfirm">✓ I PAID (DEMO)</button>
+
+    <!-- STAGE 3: Success -->
+    <div id="pmStage3" class="hidden">
+      <div class="pm-suc-icon">✓</div>
+      <div class="pm-suc-title">PAYMENT AUTHORIZED</div>
+      <div class="pm-suc-sub" id="pmSucSub">ACCESS TO PAGE 2 GRANTED</div>
+      <div class="pm-suc-note">Initiating cosmic transition...</div>
+    </div>
+
   </div>
 </div>
 
-<!-- ====== RANDOM EVENT OVERLAY ====== -->
-<div class="overlay" id="eventModal" role="dialog" aria-modal="true" aria-label="Random Event">
-  <div class="overlay-card">
-    <div class="event-modal-icon" id="evtIcon">🚨</div>
-    <div class="event-modal-title" id="evtTitle">BUTTON EMERGENCY</div>
-    <div class="event-modal-body" id="evtBody">Something has happened.</div>
-    <div class="event-action-btns" id="evtBtns">
-      <button class="evt-btn" id="evtOk">OK</button>
-    </div>
+<!-- ══ RANDOM EVENT MODAL ══ -->
+<div class="overlay" id="eventModal" role="dialog" aria-modal="true">
+  <div class="ov-card glass-modal evt-card">
+    <div class="em-icon" id="emIcon">🚨</div>
+    <div class="em-title" id="emTitle">EVENT</div>
+    <div class="em-body" id="emBody">Something happened.</div>
+    <div class="em-btns" id="emBtns"></div>
   </div>
 </div>
 
-<!-- ====== ACHIEVEMENT TOAST ====== -->
-<div class="ach-toast" id="achToast" aria-live="polite">
-  <div class="ach-toast-icon" id="achToastIcon">🏆</div>
-  <div class="ach-toast-text">
-    <span class="ach-toast-title" id="achToastTitle">ACHIEVEMENT UNLOCKED</span>
-    <span class="ach-toast-desc" id="achToastDesc">You did something.</span>
+<!-- ══ ACHIEVEMENT TOAST ══ -->
+<div id="achToast" role="status" aria-live="polite">
+  <span class="at-icon" id="atIcon">🏆</span>
+  <div class="at-text">
+    <span class="at-title" id="atTitle">ACHIEVEMENT UNLOCKED</span>
+    <span class="at-desc" id="atDesc">You did something.</span>
   </div>
 </div>
 
-<!-- ====== SECRET ENDING ====== -->
+<!-- ══ SECRET ENDING ══ -->
 <div id="secretEnding">
-  <div class="ending-line" id="e1">Congratulations.</div>
-  <div class="ending-line" id="e2">You reached the end.</div>
-  <div class="ending-line" id="e3">There was never anything here.</div>
-  <div class="ending-line big" id="e4">THANK YOU FOR WASTING YOUR TIME.</div>
-  <button class="ending-back" id="endingBack">Go back and waste more →</button>
+  <div class="se-line" id="se1">Congratulations.</div>
+  <div class="se-line" id="se2">You reached the end.</div>
+  <div class="se-line" id="se3">There was never anything here.</div>
+  <div class="se-line se-big" id="se4">THANK YOU FOR WASTING YOUR TIME.</div>
+  <button class="se-back" id="seBack">Return to the void →</button>
 </div>
 
 <script src="script.js"></script>
